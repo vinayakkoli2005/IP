@@ -1,5 +1,5 @@
-import pandas as pd
-import re
+# import pandas as pd
+# import re
 
 # load file 
 # twitter = pd.read_csv('twitterdataoutput.csv', encoding='utf-8')
@@ -42,7 +42,6 @@ import re
 # ---------------------------------------------------------------------------------------------------------------------
 
 # filter the small sentences 
-
 
 # import csv
 
@@ -136,6 +135,79 @@ import re
 # standardize_timestamp("filteredtwitter.csv", "standardisedtwitter.csv", "Twitter Dataset")
 # standardize_timestamp("filteredwiki.csv", "standardisedwiki.csv", "Wikidata Dataset")
 
+# ----------------------------------------------------------------------------------------
+
+# find no. of non english sentences 
+
+# import pandas as pd
+# from langdetect import detect
+# from langdetect.lang_detect_exception import LangDetectException
+
+# def is_english(text):
+#     try:
+#         return detect(text) == 'en'
+#     except LangDetectException:
+#         return False
+
+# def count_non_english_sentences(file_path):
+#     df = pd.read_csv(file_path)
+
+#     if 'content' not in df.columns:
+#         print(f"'content' column not found in {file_path}")
+#         return
+
+#     non_english_count = 0
+#     total = len(df)
+
+#     for i, text in enumerate(df['content'].astype(str)):
+#         if not is_english(text):
+#             non_english_count += 1
+
+#     print(f"{file_path}: {non_english_count} non-English sentences out of {total} total rows.")
+
+# # count_non_english_sentences('standardisedtwitter.csv')
+# count_non_english_sentences('standardisedwiki.csv')
+# # print("done")
+
+# standardisedtwitter.csv: 78300 non-English sentences out of 294271 total rows.
+# standardisedwiki.csv: 3330 non-English sentences out of 306558 total rows.
+
+# ------------------------------------------------------------------------------------------------------------------------
 
 
-# Hello teatinh
+#  eliminating non english sentences
+
+import pandas as pd
+from langdetect import detect
+from langdetect.lang_detect_exception import LangDetectException
+
+# Function to detect if the text is in English
+def is_english(text):
+    try:
+        return detect(text) == 'en'
+    except LangDetectException:
+        return False
+
+# Function to process one file and remove non-English rows
+def remove_non_english_rows(input_path, output_path):
+    df = pd.read_csv(input_path)
+
+    if 'content' not in df.columns:
+        print(f"'content' column not found in {input_path}")
+        return
+
+    # Apply language detection
+    df['is_english'] = df['content'].astype(str).apply(is_english)
+
+    # Filter only English rows and drop the helper column
+    english_df = df[df['is_english']].drop(columns=['is_english'])
+
+    # Save to output file
+    english_df.to_csv(output_path, index=False)
+    print(f"Saved {len(english_df)} English rows to '{output_path}' (from {len(df)} total).")
+
+
+# remove_non_english_rows('standardisedtwitter.csv', 'filtered_twitter_english.csv')
+# remove_non_english_rows('standardisedwiki.csv', 'filtered_wiki_english.csv')
+
+print(len(pd.read_csv('filtered_wiki_english.csv')))
