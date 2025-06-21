@@ -43,41 +43,44 @@
 
 # filter the small sentences 
 
-# import csv
+import csv
 
-# # Set threshold for minimum content length
-# MIN_CONTENT_LENGTH = 30
+# Set threshold for minimum content length
+MIN_CONTENT_LENGTH = 200
 
-# def filter_and_save(input_file, output_file, label):
-#     print(f"\n--- Short sentences from {label} ---")
-#     short_count = 0
-#     total_rows = 0
+def filter_and_save(input_file, output_file, label):
+    print(f"\n--- Short sentences from {label} ---")
+    short_count = 0
+    total_rows = 0
 
-#     with open(input_file, "r", encoding='utf-8') as infile, \
-#          open(output_file, "w", encoding='utf-8', newline='') as outfile:
+    with open(input_file, "r", encoding='utf-8') as infile, \
+         open(output_file, "w", encoding='utf-8', newline='') as outfile:
 
-#         reader = csv.DictReader(infile)
-#         fieldnames = reader.fieldnames
-#         writer = csv.DictWriter(outfile, fieldnames=fieldnames)
-#         writer.writeheader()
+        reader = csv.DictReader(infile)
+        fieldnames = reader.fieldnames
+        writer = csv.DictWriter(outfile, fieldnames=fieldnames)
+        writer.writeheader()
 
-#         for row in reader:
-#             total_rows += 1
-#             content = row.get('content', '').strip()
-#             if len(content) < MIN_CONTENT_LENGTH:
-#                 print(f"ID: {row.get('id', '')} | Content: {content} | Date: {row.get('date', '')}")
-#                 short_count += 1
-#             else:
-#                 writer.writerow(row)
+        for row in reader:
+            total_rows += 1
+            content = row.get('content', '').strip()
+            if len(content) < MIN_CONTENT_LENGTH:
+                # print(f"ID: {row.get('id', '')} | Content: {content} | Date: {row.get('date', '')}")
+                short_count += 1
+            else:
+                writer.writerow(row)
 
-#     print(f"Total short sentences found: {short_count}")
-#     print(f"Filtered data written to {output_file}. Remaining rows: {total_rows - short_count}\n")
+    print(f"Total short sentences found: {short_count}")
+    print(f"Filtered data written to {output_file}. Remaining rows: {total_rows - short_count}\n")
 
 
-# # Process each dataset independently
-# filter_and_save("twitterdataoutput.csv", "filteredtwitter.csv", "Tweets Dataset")
-# filter_and_save("wikidataoutput.csv", "filteredwiki.csv", "Wikidata Dataset")
+# Process each dataset independently
+# filter_and_save("filtered_wiki_english.csv", "shortlisted_wiki.csv", "Wikipedia Dataset")
+filter_and_save("filtered_twitter_english.csv", "shortlisted_twitter.csv", "Twitter Dataset")
 
+
+# Filtered data written to shortlisted_wiki.csv. Remaining rows: 77708
+# Filtered data written to shortlisted_twitter.csv. Remaining rows: 59466
 # -------------------------------------------
 
 # date to timestamp
@@ -177,37 +180,37 @@
 
 #  eliminating non english sentences
 
-import pandas as pd
-from langdetect import detect
-from langdetect.lang_detect_exception import LangDetectException
+# import pandas as pd
+# from langdetect import detect
+# from langdetect.lang_detect_exception import LangDetectException
 
-# Function to detect if the text is in English
-def is_english(text):
-    try:
-        return detect(text) == 'en'
-    except LangDetectException:
-        return False
+# # Function to detect if the text is in English
+# def is_english(text):
+#     try:
+#         return detect(text) == 'en'
+#     except LangDetectException:
+#         return False
 
-# Function to process one file and remove non-English rows
-def remove_non_english_rows(input_path, output_path):
-    df = pd.read_csv(input_path)
+# # Function to process one file and remove non-English rows
+# def remove_non_english_rows(input_path, output_path):
+#     df = pd.read_csv(input_path)
 
-    if 'content' not in df.columns:
-        print(f"'content' column not found in {input_path}")
-        return
+#     if 'content' not in df.columns:
+#         print(f"'content' column not found in {input_path}")
+#         return
 
-    # Apply language detection
-    df['is_english'] = df['content'].astype(str).apply(is_english)
+#     # Apply language detection
+#     df['is_english'] = df['content'].astype(str).apply(is_english)
 
-    # Filter only English rows and drop the helper column
-    english_df = df[df['is_english']].drop(columns=['is_english'])
+#     # Filter only English rows and drop the helper column
+#     english_df = df[df['is_english']].drop(columns=['is_english'])
 
-    # Save to output file
-    english_df.to_csv(output_path, index=False)
-    print(f"Saved {len(english_df)} English rows to '{output_path}' (from {len(df)} total).")
+#     # Save to output file
+#     english_df.to_csv(output_path, index=False)
+#     print(f"Saved {len(english_df)} English rows to '{output_path}' (from {len(df)} total).")
 
 
 # remove_non_english_rows('standardisedtwitter.csv', 'filtered_twitter_english.csv')
 # remove_non_english_rows('standardisedwiki.csv', 'filtered_wiki_english.csv')
 
-print(len(pd.read_csv('filtered_wiki_english.csv')))
+# print(len(pd.read_csv('filtered_wiki_english.csv')))
