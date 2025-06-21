@@ -79,8 +79,8 @@ def filter_and_save(input_file, output_file, label):
 filter_and_save("filtered_twitter_english.csv", "shortlisted_twitter.csv", "Twitter Dataset")
 
 
-# Filtered data written to shortlisted_wiki.csv. Remaining rows: 77708
-# Filtered data written to shortlisted_twitter.csv. Remaining rows: 59466
+# Filtered data written to shortlisted_wiki.csv. Remaining rows: 77708 len = 500
+# Filtered data written to shortlisted_twitter.csv. Remaining rows: 59466 len = 200
 # -------------------------------------------
 
 # date to timestamp
